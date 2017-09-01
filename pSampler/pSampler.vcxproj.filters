@@ -24,16 +24,7 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Base.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LinkCell.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parameter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Particle.h">
@@ -42,7 +33,10 @@
     <ClInclude Include="Particle_x.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pSampler.h">
+    <ClInclude Include="Bitmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

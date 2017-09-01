@@ -13,17 +13,16 @@
 #include "Particle.h"
 #include "Polynomial.h"
 #include "Derivative.h"
-
-namespace SIM {
+#include <algorithm>
 
 	template <typename R, int D, int P>
-	class Particle_x : public Particle<R,D,Particle_x<R,D,P>> {};
+	class Particle_x : public Particle<R,D> {};
 
 	template <typename R, int P>
-	class Particle_x<R,1,P> :  public Particle<R,1,Particle_x<R,1,P>>{};
+	class Particle_x<R,1,P> :  public Particle<R,1>{};
 
 	template <typename R, int P>
-	class Particle_x<R,2,P> : public Particle<R,2,Particle_x<R,2,P>> {
+	class Particle_x<R,2,P> : public Particle<R,2> {
 		typedef mMath::Polynomial_A<R,2,P> PN;
 		typedef mMath::Derivative_A<R,2,P> DR;
 		typedef mMath::Polynomial_A<R,2,P+1> PNH;
@@ -37,6 +36,10 @@ namespace SIM {
 	public:
 		Particle_x() : Particle() {}
 		~Particle_x() {}
+
+		__forceinline const R ww(const R& r) const {
+				return pow(std::max(1 - r / r0, 0.0), 2);
+		}
 
 		__forceinline void poly(const R* in, R* out) const { PN::Run(varrho, in, out); }
 		__forceinline void polyH(const R* in, R* out) const { PNH::Run(varrho, in, out); }
@@ -297,6 +300,7 @@ namespace SIM {
 
 		const R interpolateLSA(const R* const phi, const R& px, const R& py) const {
 			int p = -1;
+			R dp2_min = 2 * 2 * dp*dp;
 			R dis2 = std::numeric_limits<R>::max();
 			const int cx = cell->pos2cell(px);
 			const int cy = cell->pos2cell(py);
@@ -316,12 +320,13 @@ namespace SIM {
 					}
 				}
 			}
-			if (p == -1) return R(0);
+			if (p == -1 || type[p] == BD2 || dis2 > dp2_min) return R(0);
 			return interpolateLSA(phi, p, px, py);
 		}
 
 		const Vec interpolateLSA(const R* const phix, const R* const phiy, const R& px, const R& py) const {
 			int p = -1;
+			R dp2_min = 2 * 2 * dp*dp;
 			R dis2 = std::numeric_limits<R>::max();
 			const int cx = cell->pos2cell(px);
 			const int cy = cell->pos2cell(py);
@@ -329,19 +334,17 @@ namespace SIM {
 				const int key = cell->hash(cx, cy, i);
 				for (int m = 0; m < cell->linkList[key].size(); m++) {
 					const int q = cell->linkList[key][m];
-					if (type[q] != BD2) {
-						const R dr[2] = { pos[0][q] - px, pos[1][q] - py };
-						const R dr2 = (dr[0] * dr[0] + dr[1] * dr[1]);
-						const R dr1 = sqrt(dr2);
-						if (dr1 > r0) continue;
-						if (dr2 < dis2) {
-							dis2 = dr2;
-							p = q;
-						}
+					const R dr[2] = { pos[0][q] - px, pos[1][q] - py };
+					const R dr2 = (dr[0] * dr[0] + dr[1] * dr[1]);
+					const R dr1 = sqrt(dr2);
+					if (dr1 > r0) continue;
+					if (dr2 < dis2) {
+						dis2 = dr2;
+						p = q;
 					}
 				}
 			}
-			if (p == -1) return Vec::Zero();
+			if (p == -1 || type[p]== BD2 || dis2 > dp2_min) return Vec::Zero();
 			return interpolateLSA(phix, phiy, p, px, py);
 		}
 
@@ -814,134 +817,9 @@ namespace SIM {
 			}
 		}
 
-		const R DivH(const R* const phix, const R* const phiy, const int& p) const {
-			typedef Eigen::Matrix<R,PNH::value,1> VecPH;
-			typedef Eigen::Matrix<R,PNH::value,PNH::value> MatPPH;
-			MatPPH mm = MatPPH::Zero();
-			VecPH vvx = VecPH::Zero();
-			VecPH vvy = VecPH::Zero();
-			const int cx = cell->pos2cell(pos[0][p]);
-			const int cy = cell->pos2cell(pos[1][p]);
-			for (int i = 0; i < cell->blockSize::value; i++) {
-				const int key = cell->hash(cx, cy, i);
-				for (int m = 0; m < cell->linkList[key].size(); m++) {
-					const int q = cell->linkList[key][m];
-					if (type[q] != BD2) {
-						const R dr[2] = { pos[0][q] - pos[0][p], pos[1][q] - pos[1][p] };
-						const R dr1 = sqrt(dr[0] * dr[0] + dr[1] * dr[1]);
-						if (dr1 > r0) continue;
-						const R w = ww(dr1);
-						VecPH npq;
-						polyH(dr, npq.data());
-						mm += (w* npq)* npq.transpose();
-						vvx += w * (phix[q] - phix[p]) * npq;
-						vvy += w * (phiy[q] - phiy[p]) * npq;
-					}
-				}
-			}
-			MatPPH inv = MatPPH::Zero();
-			if (abs(mm.determinant()) < eps_mat) {
-#if DEBUG
-				std::cout << " (DivH) ID: " << p << " --- " << " Determinant defficiency: " << mm.determinant() << std::endl;
-#endif
-				auto mm_ = mm.block<2, 2>(0, 0);
-				if (abs(mm_.determinant()) < eps_mat) inv = MatPPH::Zero();
-				else inv.block<2, 2>(0, 0) = mm_.inverse();
-			}
-			else inv = mm.inverse();
-			const R pupx = pnH_px_o* inv * vvx;
-			const R pvpy = pnH_py_o* inv * vvy;
-			return pupx + pvpy;
-		}
-
-		const void DivGrad(const R* const phi, R* const DG) const {
-			std::vector<Vec> gradient(np);
-#if OMP
-#pragma omp parallel for
-#endif
-			for (int p = 0; p < np; p++) {
-				gradient[p] = Grad(phi, p);
-			}
-#if OMP
-#pragma omp parallel for
-#endif
-			for (int p = 0; p < np; p++) {
-				VecP vvx = VecP::Zero();
-				VecP vvy = VecP::Zero();
-				const int cx = cell->pos2cell(pos[0][p]);
-				const int cy = cell->pos2cell(pos[1][p]);
-				for (int i = 0; i < cell->blockSize::value; i++) {
-					const int key = cell->hash(cx, cy, i);
-					for (int m = 0; m < cell->linkList[key].size(); m++) {
-						const int q = cell->linkList[key][m];
-						if (type[q] == BD2) continue;
-						const R dr[2] = { pos[0][q] - pos[0][p], pos[1][q] - pos[1][p] };
-						const R dr1 = sqrt(dr[0] * dr[0] + dr[1] * dr[1]);
-						if (dr1 > r0) continue;
-						const R w = ww(dr1);
-						VecP npq;
-						poly(dr, npq.data());
-						vvx += w * (gradient[q][0] - gradient[p][0]) * npq;
-						vvy += w * (gradient[q][1] - gradient[p][1]) * npq;
-					}
-				}
-				const R pupx = pn_px_o* invMat[p] * vvx;
-				const R pvpy = pn_py_o* invMat[p] * vvy;
-				DG[p] = pupx + pvpy;
-			}
-		}
-
-		const R Div(const R* const phix, const R* const phiy, const int& p, const R& neumann) const {
-			VecP vvx = VecP::Zero();
-			VecP vvy = VecP::Zero();
-			const int cx = cell->pos2cell(pos[0][p]);
-			const int cy = cell->pos2cell(pos[1][p]);
-			for (int i = 0; i < cell->blockSize::value; i++) {
-				const int key = cell->hash(cx, cy, i);
-				for (int m = 0; m < cell->linkList[key].size(); m++) {
-					const int q = cell->linkList[key][m];
-					if (type[q] != BD2) {
-						const R dr[2] = { pos[0][q] - pos[0][p], pos[1][q] - pos[1][p] };
-						const R dr1 = sqrt(dr[0] * dr[0] + dr[1] * dr[1]);
-						if (dr1 > r0) continue;
-						const R w = ww(dr1);
-						VecP npq;
-						poly(dr, npq.data());
-						vvx += w * (phix[q] - phix[p]) * npq;
-						vvy += w * (phiy[q] - phiy[p]) * npq;
-					}
-				}
-			}
-			VecP inner = VecP::Zero();
-			inner.block<2, 1>(0, 0) = bdnorm.at(p);
-			const VecP cst = neumann *ww(R(0))* (R(1) / varrho)* inner;
-			const R pupx = pn_px_o* invNeu[p] * (vvx + cst);
-			const R pvpy = pn_py_o* invNeu[p] * (vvy + cst);
-			return pupx + pvpy;
-		}
-
-		const int NearestFluid(const int& p) {
-			int id = p;
-			R dis = std::numeric_limits<R>::max();
-			const int cx = cell->pos2cell(pos[0][p]);
-			const int cy = cell->pos2cell(pos[1][p]);
-			for (int i = 0; i < cell->blockSize::value; i++) {
-				const int key = cell->hash(cx, cy, i);
-				for (int m = 0; m < cell->linkList[key].size(); m++) {
-					const int q = cell->linkList[key][m];
-					if (type[q] != FLUID) continue;
-					const R dr[2] = { pos[0][q] - pos[0][p], pos[1][q] - pos[1][p] };
-					const R dr2 = (dr[0] * dr[0] + dr[1] * dr[1]);
-					if (dr2 < dis) {
-						dis = dr2;
-						id = q;
-					}
-				}
-			}
-			return id;
-		}
-
-		void init_x() {
+		void init() {
+			eps = static_cast<R>(1.e-10);
+			eps_mat = static_cast<R>(1.e-6);
 			for (int p = 0; p < np; p++) {
 				invMat.push_back(MatPP());
 				invNeu.push_back(MatPP());
@@ -962,19 +840,28 @@ namespace SIM {
 
 			DRH::Run<1, 0>(varrho, zero.data(), pnH_px_o.data());
 			DRH::Run<0, 1>(varrho, zero.data(), pnH_py_o.data());
+
+			for (int p = 0; p < np; p++) {
+				div[p] = Div(vel[0].data(), vel[1].data(), p);
+				vort[p] = Rot(vel[0].data(), vel[1].data(), p);
+				spd[p] = sqrt(vel[0][p]*vel[0][p] + vel[1][p]*vel[1][p]);
+			}
 		}
-		void addPart(const int& t, const Vec& p, const Vec& v, const R& tp) {
-			Particle<R,2,Particle_x<R,2,P>>::addPart(t, p, v, tp);
+		void addPart(const int& t, const Vec& p, const Vec& v) {
+			Particle<R,2>::addPart(t, p, v);
 			invMat.push_back(MatPP());
 			invNeu.push_back(MatPP());
 		}
 		void erasePart(const int& offset) {
-			Particle<R,2,Particle_x<R,2,P>>::erasePart(offset);
+			Particle<R,2>::erasePart(offset);
 			invMat.erase(invMat.begin() + offset);
 			invNeu.erase(invNeu.begin() + offset);
 		}
 
 	public:
+		R eps;
+		R eps_mat;
+
 		std::vector<MatPP> invMat;
 		std::vector<MatPP> invNeu;
 
@@ -993,6 +880,4 @@ namespace SIM {
 	};
 
 	template <typename R, int P>
-	class Particle_x<R,3,P> : public Particle<R,3,Particle_x<R,3,P>> {};
-
-}
+	class Particle_x<R,3,P> : public Particle<R,3> {};

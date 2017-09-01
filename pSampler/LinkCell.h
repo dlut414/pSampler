@@ -14,8 +14,6 @@
 #include "mMath.h"
 #include <BBox.h>
 
-namespace SIM {
-
 	template <typename R, int D>
 	class LinkCell {};
 
@@ -86,5 +84,3 @@ namespace SIM {
 
 	template <typename R>
 	class LinkCell<R,3> {};
-
-}

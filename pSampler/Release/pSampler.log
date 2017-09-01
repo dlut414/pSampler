@@ -1,0 +1,118 @@
+﻿Build started 2017/09/02 0:12:29.
+     1>Project "C:\Users\HU FANGYUAN\Documents\Visual Studio 2013\Projects\pSampler\pSampler\pSampler.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\HU FANGYUAN\Documents\Visual Studio 2013\Projects\extern\eigen" /I"C:\Users\HU FANGYUAN\Documents\Visual Studio 2013\Projects\extern\stb-master" /I"C:\Users\HU FANGYUAN\Documents\Visual Studio 2013\Projects\extern\freeglut-2.8.1\include" /I"C:\Users\HU FANGYUAN\Documents\Visual Studio 2013\Projects\extern\glew-1.11.0\include" /I"C:\Users\HU FANGYUAN\Documents\Visual Studio 2013\Projects\extern\glm" /I"C:\Users\HU FANGYUAN\Documents\Visual Studio 2013\Projects\pSampler\common" /I"C:\Users\HU FANGYUAN\Documents\Visual Studio 2013\Projects\extern\AntTweakBar\include" /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt pSampler.cpp
+         pSampler.cpp
+     1>c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle_x.h(335): warning C4018: '<' : signed/unsigned mismatch
+                 c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle_x.h(327) : while compiling class template member function 'const Eigen::Matrix<double,2,1,0,2,1> Particle_x<Para::DataType,2,2>::interpolateLSA(const R *const ,const R *const ,const R &,const R &) const'
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+                 pSampler.cpp(32) : see reference to function template instantiation 'const Eigen::Matrix<double,2,1,0,2,1> Particle_x<Para::DataType,2,2>::interpolateLSA(const R *const ,const R *const ,const R &,const R &) const' being compiled
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+                 pSampler.cpp(29) : see reference to class template instantiation 'Particle_x<Para::DataType,2,2>' being compiled
+     1>c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle_x.h(204): warning C4018: '<' : signed/unsigned mismatch
+                 c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle_x.h(197) : while compiling class template member function 'const Para::DataType Particle_x<Para::DataType,2,2>::Div(const R *const ,const R *const ,const int &) const'
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+                 c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle_x.h(845) : see reference to function template instantiation 'const Para::DataType Particle_x<Para::DataType,2,2>::Div(const R *const ,const R *const ,const int &) const' being compiled
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+     1>c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle_x.h(282): warning C4018: '<' : signed/unsigned mismatch
+                 c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle_x.h(275) : while compiling class template member function 'const Para::DataType Particle_x<Para::DataType,2,2>::Rot(const R *const ,const R *const ,const int &) const'
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+                 c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle_x.h(846) : see reference to function template instantiation 'const Para::DataType Particle_x<Para::DataType,2,2>::Rot(const R *const ,const R *const ,const int &) const' being compiled
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+     1>c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle_x.h(406): warning C4018: '<' : signed/unsigned mismatch
+                 c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle_x.h(396) : while compiling class template member function 'const Eigen::Matrix<double,2,1,0,2,1> Particle_x<Para::DataType,2,2>::interpolateLSA(const R *const ,const R *const ,const int &,const R &,const R &) const'
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+                 c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle_x.h(348) : see reference to function template instantiation 'const Eigen::Matrix<double,2,1,0,2,1> Particle_x<Para::DataType,2,2>::interpolateLSA(const R *const ,const R *const ,const int &,const R &,const R &) const' being compiled
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+     1>c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle.h(110): warning C4316: 'LinkCell<R,2>' : object allocated on the heap may not be aligned 16
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+                 c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle.h(101) : while compiling class template member function 'void Particle<R,2>::buildCell(void)'
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+                 c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle.h(81) : see reference to function template instantiation 'void Particle<R,2>::buildCell(void)' being compiled
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+                 c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle_x.h(25) : see reference to class template instantiation 'Particle<R,2>' being compiled
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+     1>c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\LinkCell.h(41): warning C4018: '<' : signed/unsigned mismatch
+                 c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\LinkCell.h(40) : while compiling class template member function 'void LinkCell<R,2>::update(const R *const ,const R *const ,const int &)'
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+                 c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle.h(114) : see reference to function template instantiation 'void LinkCell<R,2>::update(const R *const ,const R *const ,const int &)' being compiled
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+                 c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle_x.h(331) : see reference to class template instantiation 'LinkCell<R,2>' being compiled
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+                 c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\Particle_x.h(327) : while compiling class template member function 'const Eigen::Matrix<double,2,1,0,2,1> Particle_x<Para::DataType,2,2>::interpolateLSA(const R *const ,const R *const ,const R &,const R &) const'
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+                 pSampler.cpp(32) : see reference to function template instantiation 'const Eigen::Matrix<double,2,1,0,2,1> Particle_x<Para::DataType,2,2>::interpolateLSA(const R *const ,const R *const ,const R &,const R &) const' being compiled
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+     1>c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\LinkCell.h(61): warning C4018: '>=' : signed/unsigned mismatch
+                 c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\LinkCell.h(54) : while compiling class template member function 'void LinkCell<R,2>::initialize(void)'
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+                 c:\users\hu fangyuan\documents\visual studio 2013\projects\psampler\psampler\LinkCell.h(25) : see reference to function template instantiation 'void LinkCell<R,2>::initialize(void)' being compiled
+                 with
+                 [
+                     R=Para::DataType
+                 ]
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\HU FANGYUAN\Documents\Visual Studio 2013\Projects\pSampler\Release\pSampler.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\Users\HU FANGYUAN\Documents\Visual Studio 2013\Projects\pSampler\Release" /LIBPATH:"C:\Users\HU FANGYUAN\Documents\Visual Studio 2013\Projects\extern\AntTweakBar\lib" /LIBPATH:"C:\Users\HU FANGYUAN\Documents\Visual Studio 2013\Projects\extern\freeglut-2.8.1\lib\x86" SimulationDll.lib VisualizationDll.lib freeglut.lib AntTweakBar.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\HU FANGYUAN\Documents\Visual Studio 2013\Projects\pSampler\Release\pSampler.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\HU FANGYUAN\Documents\Visual Studio 2013\Projects\pSampler\Release\pSampler.lib" /MACHINE:X86 /SAFESEH Release\pSampler.obj
+         Release\stdafx.obj
+         Generating code
+         Finished generating code
+         pSampler.vcxproj -> C:\Users\HU FANGYUAN\Documents\Visual Studio 2013\Projects\pSampler\Release\pSampler.exe
+     1>Done Building Project "C:\Users\HU FANGYUAN\Documents\Visual Studio 2013\Projects\pSampler\pSampler\pSampler.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:05.71

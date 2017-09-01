@@ -6,7 +6,36 @@
 * Released under CC BY-NC
 */
 #pragma once
+
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <ctime>
 #include <string.h>
+
+//#define GLEW_STATIC
+#include <GL/glew.h>
+
+#ifdef _WIN32
+#include <GL/wglew.h> // For wglSwapInterval
+#endif
+
+//#define FREEGLUT_STATIC
+#include <GL/freeglut.h>
+
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtx/quaternion.hpp>
+
+#include "AntTweakBar.h"
+
+
+#define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
+#define PRINT(x) std::cout << __FILENAME__ << " @Ln " << __LINE__ << ": " << #x << " = " << x << std::endl;
+
 #define DEBUG 0
 #define LEGACY 0
 #define NTHREAD 4
@@ -35,3 +64,5 @@
 #define ON(A, B)	(A|B)
 #define OFF(A, B)	(A&(~B))
 #define IS(A, B)	(A&B)
+
+#define NTHREAD 4
