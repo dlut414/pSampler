@@ -56,3 +56,5 @@ Temporary Items
 *.vcxproj
 *.pdb
 *.user
+*.in
+.out

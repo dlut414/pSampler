@@ -42,26 +42,30 @@ static void setTwVisible(TwBar* const bar, const int visible);
 static void Render() {
 	switch (control.m_mode) {
 	case VIS::DMODE_ONE:
-		Visualization::Run(&control, part.np, NPtr(part.type.data()), NPtr(part.pos[0].data()), NPtr(part.pos[1].data()), NPtr(part.vort.data()));
-		setTwVisible(StreamBar, 0);
-		break;
-	case VIS::DMODE_TWO:
-		Visualization::Run(&control, part.np, NPtr(part.type.data()), NPtr(part.pos[0].data()), NPtr(part.pos[1].data()), NPtr(part.div.data()));
-		setTwVisible(StreamBar, 0);
-		break;
-	case VIS::DMODE_THREE:
-		Visualization::Run(&control, part.np, NPtr(part.type.data()), NPtr(part.pos[0].data()), NPtr(part.pos[1].data()), NPtr(part.pres.data()));
-		setTwVisible(StreamBar, 0);
-		break;
-	case VIS::DMODE_FOUR:
 		Visualization::Run(&control, part.np, NPtr(part.type.data()), NPtr(part.pos[0].data()), NPtr(part.pos[1].data()), NPtr(part.vel[0].data()));
 		setTwVisible(StreamBar, 0);
 		break;
-	case VIS::DMODE_FIVE:
+	case VIS::DMODE_TWO:
 		Visualization::Run(&control, part.np, NPtr(part.type.data()), NPtr(part.pos[0].data()), NPtr(part.pos[1].data()), NPtr(part.vel[1].data()));
 		setTwVisible(StreamBar, 0);
 		break;
+	case VIS::DMODE_THREE:
+		Visualization::Run(&control, part.np, NPtr(part.type.data()), NPtr(part.pos[0].data()), NPtr(part.pos[1].data()), NPtr(part.spd.data()));
+		setTwVisible(StreamBar, 0);
+		break;
+	case VIS::DMODE_FOUR:
+		Visualization::Run(&control, part.np, NPtr(part.type.data()), NPtr(part.pos[0].data()), NPtr(part.pos[1].data()), NPtr(part.pres.data()));
+		setTwVisible(StreamBar, 0);
+		break;
+	case VIS::DMODE_FIVE:
+		Visualization::Run(&control, part.np, NPtr(part.type.data()), NPtr(part.pos[0].data()), NPtr(part.pos[1].data()), NPtr(part.vort.data()));
+		setTwVisible(StreamBar, 0);
+		break;
 	case VIS::DMODE_SIX:
+		Visualization::Run(&control, part.np, NPtr(part.type.data()), NPtr(part.pos[0].data()), NPtr(part.pos[1].data()), NPtr(part.div.data()));
+		setTwVisible(StreamBar, 0);
+		break;
+	case VIS::DMODE_SEVEN:
 		setTwVisible(StreamBar, 1);
 		Visualization::Run_stream(&control, 0, InterpolationWraper);
 		break;
@@ -76,7 +80,7 @@ static void setTwVisible(TwBar* const bar, const int visible) {
 }
 
 static void callBack() {
-	if (control.i_bmp) {
+	if (control.i_print) {
 		setTwVisible(GUIBar, 0);
 		setTwVisible(StreamBar, 0);
 		Render();
@@ -88,7 +92,10 @@ static void callBack() {
 		bm.SaveAsPNG(name);
 		setTwVisible(GUIBar, 1);
 		setTwVisible(StreamBar, 1);
-		control.i_bmp = 0;
+		control.i_print = 0;
+	}
+	if (control.i_sens) {
+		control.i_sens = 0;
 	}
 }
 static void fps() {
@@ -171,16 +178,8 @@ static void onIdle() {
 	return;
 }
 
-void TW_CALL ButtonRun_callback(void*) {
-	if (control.i_stop) {
-		TwDefine(" GUI/RunStop label='Stop' ");
-	}
-	else {
-		TwDefine(" GUI/RunStop label='Run' ");
-	}
-	control.i_stop = !control.i_stop;
-	TwDraw();
-}
+void TW_CALL ButtonSnap_callback(void*) { control.i_print = 1; }
+void TW_CALL ButtonSensor_callback(void*) { control.i_sens = 1; }
 
 void TW_CALL ButtonRenderStream_callback(void*) {
 	Visualization::Run_stream(&control, 1, InterpolationWraper);
@@ -231,17 +230,16 @@ static void Initialize(int argc, char** argv) {
 	TwWindowSize(control.u_width, control.u_height);
 	GUIBar = TwNewBar("GUI");
 	TwDefine(" GUI size='180 300' position='0 0' ");
-	TwEnumVal ev[] = { { VIS::DMODE_ONE, "Vorticity" }, { VIS::DMODE_TWO, "Divergence" }, { VIS::DMODE_THREE, "Pressure" }, { VIS::DMODE_FOUR, "VelocityX" }, { VIS::DMODE_FIVE, "VelocityY" }, { VIS::DMODE_SIX, "Streamline" } };
-	TwType quantity = TwDefineEnum("quantity", ev, 6);
+	TwEnumVal ev[] = { { VIS::DMODE_ONE, "velocity-x" }, { VIS::DMODE_TWO, "velocity-y" }, { VIS::DMODE_THREE, "speed" }, 
+					{ VIS::DMODE_FOUR, "pressure" }, { VIS::DMODE_FIVE, "vorticity" }, { VIS::DMODE_SIX, "divergence" }, {VIS::DMODE_SEVEN, "streamline"} };
+	TwType quantity = TwDefineEnum("quantity", ev, 7);
 	TwAddVarRW(GUIBar, "Quantity", quantity, &control.m_mode, " group='Display' ");
 	TwAddVarRW(GUIBar, "Min", TW_TYPE_FLOAT, &control.f_sRangeMin, " group='Range' ");
 	TwAddVarRW(GUIBar, "Max", TW_TYPE_FLOAT, &control.f_sRangeMax, " group='Range' ");
 	TwDefine(" GUI/Range group='Display' ");
 	TwEnumVal ev_switch[] = { { 0, "Off" }, { 1, "On" }, };
-	TwType onoff = TwDefineEnum("onoff", ev_switch, 2);
-	TwAddVarRW(GUIBar, "Sensors", onoff, &control.i_senSwitch, " group='Output' ");
-	TwAddVarRW(GUIBar, "Snapshot", onoff, &control.i_bmpSwitch, " group='Output' ");
-	TwAddButton(GUIBar, "RunStop", ButtonRun_callback, NULL, " label='Run' ");
+	TwAddButton(GUIBar, "Snapshot", ButtonSnap_callback, NULL, " label='Print' ");
+	TwAddButton(GUIBar, "Sensor", ButtonSensor_callback, NULL, " label='Sensor' ");
 
 	StreamBar = TwNewBar("Streamline");
 	TwDefine(" Streamline size='250 200' position='180 0' ");

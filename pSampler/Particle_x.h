@@ -784,25 +784,6 @@
 						mm += (w* npq) * npq.transpose();
 					}
 				}
-
-				if (IS(bdc[p], P_NEUMANN)) {
-					const Vec& inner = bdnorm.at(p);
-					MatPP nn = MatPP::Zero();
-					nn.block<2,2>(0, 0) = ww(0)* inner * inner.transpose();
-					MatPP mpn = mm + nn;
-					MatPP& inv = invNeu.at(p);
-					inv = MatPP::Zero();
-					if (abs(mpn.determinant()) < eps_mat) {
-#if DEBUG
-						std::cout << " Determinant defficiency: "; PRINT(p);
-#endif
-						auto mpn_ = mpn.block<2, 2>(0, 0);
-						if (abs(mpn_.determinant()) < eps_mat) inv = MatPP::Zero();
-						else inv.block<2, 2>(0, 0) = mpn_.inverse();
-					}
-					else inv = mpn.inverse();
-				}
-
 				MatPP& invRef = invMat.at(p);
 				invRef = MatPP::Zero();
 				if (abs(mm.determinant()) < eps_mat) {
@@ -840,6 +821,8 @@
 
 			DRH::Run<1, 0>(varrho, zero.data(), pnH_px_o.data());
 			DRH::Run<0, 1>(varrho, zero.data(), pnH_py_o.data());
+
+			updateInvMat();
 
 			for (int p = 0; p < np; p++) {
 				div[p] = Div(vel[0].data(), vel[1].data(), p);

@@ -39,7 +39,7 @@
 		typedef Eigen::Matrix<R,2,1> Vec;
 		typedef Eigen::Matrix<R,2,2> Mat;
 	public:
-		Particle() {}
+		Particle() : ct(0), np(0) {}
 		~Particle() {}
 
 		void clean() {
@@ -78,9 +78,10 @@
 				iss >> pres;
 				addPart(int(typ), p, v, pres);
 			}
-			buildCell();
 			file.close();
+			buildCell();
 			std::cout << " Reading " << str << " done " << std::endl;
+			std::cout << " Number of Partcles loaded: " << np << std::endl;
 		}
 
 		void addPart(const int& t, const Vec& p, const Vec& v, const R& ps) {

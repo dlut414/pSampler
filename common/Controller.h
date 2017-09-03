@@ -11,7 +11,7 @@
 
 namespace VIS {
 
-	enum DISPLAYMODE { DMODE_ONE = 1, DMODE_TWO = 2, DMODE_THREE = 3, DMODE_FOUR = 4, DMODE_FIVE = 5, DMODE_SIX = 6, };
+	enum DISPLAYMODE { DMODE_ONE = 1, DMODE_TWO = 2, DMODE_THREE = 3, DMODE_FOUR = 4, DMODE_FIVE = 5, DMODE_SIX = 6, DMODE_SEVEN = 7, };
 
 	class Controller {
 	public:
@@ -40,7 +40,7 @@ namespace VIS {
 			i_point = 0;
 			i_save = 0;
 			i_sens = 0;
-			i_bmp = 0;
+			i_print = 0;
 			i_senSwitch = 1;
 			i_bmpSwitch = 1;
 			u_width = 1800;
@@ -157,7 +157,7 @@ namespace VIS {
 				i_sens = !i_sens;
 				break;
 			case 0x10: //ctrl p
-				i_bmp = 1;
+				i_print = 1;
 				break;
 			default:
 				break;
@@ -198,7 +198,7 @@ namespace VIS {
 		int			i_point;
 		int			i_save;
 		int			i_sens;
-		int			i_bmp;
+		int			i_print;
 		int			i_senSwitch;
 		int			i_bmpSwitch;
 		int         i_mouseButton;
