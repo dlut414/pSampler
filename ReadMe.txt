@@ -11,9 +11,10 @@ This project is published by the Author: HU FANGYUAN under CC BY-NC Licence.
 
 features:
 
-Visualize velocity, scalar, divergence, vorticity, streamline ...
-save image
-print sensor data (not available yet)
+Given 2D or 3D(not available yet) point cloud data, 
+visualize velocity, scalar, divergence, vorticity, streamline ...,
+save image,
+or print sensor data (not available yet).
 
 
 control:
@@ -21,7 +22,7 @@ control:
 left hold   : rotation
 right hold  : pan (translate)
 middle hold : scale
-left click  : print particle information
+left click  : print point information
 
 
 
