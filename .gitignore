@@ -48,6 +48,7 @@ Temporary Items
 
 Debug
 Release
+out
 *.suo
 *.tlog
 *.log
@@ -57,4 +58,5 @@ Release
 *.pdb
 *.user
 *.in
-.out
+*.pch
+*.idb
